@@ -12,15 +12,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@TeleOp(name="Close_AngelOp", group="Pushbot")
-public class Close_AngelOp extends LinearOpMode {
+@TeleOp(name="BlueFar_TunaOp", group="Pushbot")
+public class BlueFar_TunaOp extends LinearOpMode {
     NathanPushboat boat = new NathanPushboat();
     private ElapsedTime runtime = new ElapsedTime();
     
-    float rotate_angle = 180; //Change this
-    // Close_AngelOp -> 180
-    // RedFar_AngelOp -> 90
-    // BlueFar_AngelOp -> -90
+    float rotate_angle = -90; //Change this
+    // Close_TunaOp -> 180
+    // RedFar_TunaOp -> 90
+    // BlueFar_TunaOp -> -90
     
     
     //////////////////////
@@ -114,7 +114,7 @@ public class Close_AngelOp extends LinearOpMode {
         boat.back_right_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         boat.relic_extender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        telemetry.addData("uwu", "Nathan is stupid, loading imu :(");
+        telemetry.addData(">", "Nathan is stupid, loading imu :(");
         telemetry.update();
         boat.relic_extender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -1515,7 +1515,7 @@ public class Close_AngelOp extends LinearOpMode {
         if(gamepad2.x){
             boat.relic_flipper.setPosition(.77);
         }
-        telemetry.addData("uwu", boat.relic_flipper.getPosition());
+        telemetry.addData(">", boat.relic_flipper.getPosition());
     }
 
 

@@ -20,20 +20,20 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
-@Autonomous(name="BlueFar_Charlotte", group="Charlotte Autonomae")
-public class BlueFar_Charlotte extends LinearOpMode{
+@Autonomous(name="BlueClose_sheldor", group="sheldor Autonomae")
+public class BlueClose_sheldor extends LinearOpMode{
     NathanPushboat boat = new NathanPushboat();
     private ElapsedTime runtime = new ElapsedTime();
     VuforiaLocalizer vuforia;
     double rotateAngle = 0;
     double PI = Math.PI;
-    String correctCryptoSlot = "Center";
+    String correctCryptoSlot = "Left";
     @Override
     public void runOpMode(){
-        telemetry.addData("uwu", "Wait");
+        telemetry.addData(">", "Wait");
         telemetry.update();
         boat.init(hardwareMap);
-        AutoTransitioner.transitionOnStop(this, "BlueFar_AngelOp");
+        AutoTransitioner.transitionOnStop(this, "Close_TunaOp");
         
         boat.front_left_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         boat.front_right_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -50,11 +50,11 @@ public class BlueFar_Charlotte extends LinearOpMode{
         relicTemplate.setName("relicVuMarkTemplate");
         relicTrackables.activate();
         
-        telemetry.addData("uwu", "Loading IMU. If stuck in this stage for too long, use the emergency non-imu autonomous.");
+        telemetry.addData(">", "Loading IMU. If stuck in this stage for too long, use the emergency non-imu autonomous.");
         telemetry.update();
         boat.imu();
         
-        telemetry.addData("uwu", "Good");
+        telemetry.addData(">", "Good");
         telemetry.update();
         while(!opModeIsActive()){
             RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
@@ -66,7 +66,7 @@ public class BlueFar_Charlotte extends LinearOpMode{
             } else if (vuMark == RelicRecoveryVuMark.LEFT) {
                 correctCryptoSlot = "Left";
             }
-            telemetry.addData("uwu", correctCryptoSlot);
+            telemetry.addData(">", correctCryptoSlot);
             telemetry.update();
         }
         ////////////////////////////////////////////////////////////
@@ -74,7 +74,7 @@ public class BlueFar_Charlotte extends LinearOpMode{
         // S T A R T /\/\ S T A R T /\/\ S T A R T /\/\ S T A R T \\
         ////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////
-        
+
         double startTime = runtime.milliseconds();
         boat.jewel_arm.setPosition(1);
         boat.glyph_stacker.setPosition(.27);
@@ -82,89 +82,105 @@ public class BlueFar_Charlotte extends LinearOpMode{
         
         int success = 1;
         for(int i = 0; i < 3 && success == 1; i++){
-            success = detect_color("BLUE", "FAR");
+            success = detect_color("BLUE", "CLOSE");
             telemetry.addData("Success", success);
             telemetry.update();
         }
         boat.glyph_aligner.setPosition(.55);
         boat.glyph_aligner2.setPosition(.55);
-        drive(-PI/2, 10, .4); //Drives off platform
-        boat.winch.setPower(-0.3);
-        drive(-PI/2, 16, 1);
-        rotate_arc(PI + PI* 25/180, 1);
+        drive(-PI/2, 6, .4); //Drives off platform
+        boat.winch.setPower(-0.8);
         switch(correctCryptoSlot){
-            case "Right":
-                drive(0, 13 + 8, 1);
+            case "Left":
+                drive(-PI/2, 33-8, 1);
                 break;
             case "Center":
-                drive(0, 13, 1);
+                drive(-PI/2, 33, 1);
                 break;
-            case "Left":
-                drive(0, 13 - 8, 1);
+            case "Right":
+                drive(-PI/2, 33+8, 1); //Be careful it's super close to hitting blue
                 break;
         }
-        drive(PI/2, 5, 1);
-        findColumn(6, runtime.milliseconds() - startTime - 1000);
+        drive(PI, 6, 1); //Adjusts to make room for rotate
+        rotate_arc(-(PI/1.6 - PI * 10/180), 1);
+        drive(PI/2, 11.5, 1);
+        findColumn(6, 6000);
         fancyOuttake(1);
-        drive(-PI/2, 1, 1);
+        boat.winch.setPower(-0.5);
+        drive(-PI/2, 4, 1);
         switch(correctCryptoSlot){
             case "Right":
-                drive(PI, 8, 1);
+                drive(0, -8, 1);
                 break;
             case "Left":
-                drive(0, 8, 1);
+                drive(PI, -8, 1);
                 break;
         }
+        
         ////////////////////////////////////////////////////////////
         // S E C O N D    G L Y P H /\/\ S E C O N D    G L Y P H \\
         // S T A R T /\/\ S T A R T /\/\ S T A R T /\/\ S T A R T \\
         // S E C O N D    G L Y P H /\/\ S E C O N D    G L Y P H \\
         ////////////////////////////////////////////////////////////
         
-//        if(correctCryptoSlot != "Center"){ DO NOT USE NOT MEANT FOR BLUE FAR
-//            drive(PI, 24, 1);
-//            rotate(0);
-//            rotate_arc(-(PI + PI* 25/180), 1);
-//            drive(PI/2, 18, 1);
-//            for(int i = 0; i < 3 && !(boat.glyph_distance_sensor.getDistance(DistanceUnit.MM) < 100); i++){
-//                getGlyph(i);
-//                sleep(400);
-//            }
-//            drive(-PI/2, 19, 1);
-//            rotate_arc(PI + PI* 25/180, 1);
-//            
-//            switch(correctCryptoSlot){
-//                case "Right":
-//                    drive(0, 10, 1);
-//                    drive(PI/2, 10, 1);
-//                    findColumn(6, runtime.milliseconds() - startTime - 1000);
-//                    break;
-//                case "Left":
-//                    drive(0, 26, 1);
-//                    drive(PI/2, 10, 1);
-//                    findColumn(6, runtime.milliseconds() - startTime - 1000);
-//                    break;
-//            }
-//            fancyOuttake(1);
-//            drive(-PI/2, 2, 0.3);
-//        }
-//        if(runtime.milliseconds() - startTime < 28000){
-//            switch(correctCryptoSlot){
-//                case "Right":
-//                    drive(0, 6, 1);
-//                    break;
-//                case "Left":
-//                    drive (PI, 6, 1);
-//                    break;
-//            }
-//        }
+
+        rotate_arc(PI + PI* 25/180, 1);
+        drive(PI/2, 4, 1);
+        boolean door = doorGetGlyph();
+        //Back in front of center column at this point
+        
+        if(true){
+            switch(correctCryptoSlot){
+                case "Right":
+                    drive(-PI/2, 5, 1);
+                    rotate_arc(PI + PI* 25/180, 1);
+                    drive(PI, 11, 1);
+                    drive(PI/2, 13, 1);
+                    findColumn(6, runtime.milliseconds() - startTime - 1000);
+                    fancyOuttake(1);
+                    drive(-PI/2, 2, 0.3);
+                    break;
+                case "Center":
+                    drive(-PI/2, 3, 1);
+                    rotate_arc(PI + PI* 25/180, 1);
+                    drive(0, 10, 1);
+                    drive(PI/2, 7, 1);
+                    rotate(-82);
+                    drive(PI/2, 1, 1);
+                    absolutelyRetardedOuttake();
+                    drive(-PI/2, 5, 1);
+                    break;
+                case "Left":
+                    drive(-PI/2, 5, 1);
+                    rotate_arc(PI + PI* 35/180, 1);
+                    drive(0, 8, 1);
+                    drive(PI/2, 13, 1);
+                    findColumn(6, runtime.milliseconds() - startTime - 1000);
+                    fancyOuttake(1);
+                    drive(-PI/2, 2, 0.3);
+                    break;
+            }
+
+            if(runtime.milliseconds() - startTime < 28000){
+                switch(correctCryptoSlot){
+                    case "Right":
+                        drive(0, 6, 1);
+                        break;
+                    case "Center":
+                        drive(PI, 6, 1);
+                        break;
+                    case "Left":
+                        drive (PI, 6, 1);
+                        break;
+                }
+            }
+        }
         if(runtime.milliseconds() - startTime < 28000){
-            //rotate(180);
+            rotate(-90);
         }
         if(runtime.milliseconds() - startTime < 29500){
             sleep(400);
         }
-        
         /*
         */
     }
@@ -186,7 +202,7 @@ public class BlueFar_Charlotte extends LinearOpMode{
         boat.back_left_motor.setDirection(DcMotor.Direction.REVERSE);
         boat.front_right_motor.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         boat.back_right_motor.setDirection(DcMotor.Direction.FORWARD);
-        telemetry.addData("uwu", "Drive Angle: " + angle);
+        telemetry.addData(">", "Drive Angle: " + angle);
         telemetry.update();
         int Dx = (int) Math.round(Math.sin(angle + Math.PI/4));
         int Dy = (int) Math.round(Math.sin(angle - Math.PI/4));
@@ -235,7 +251,7 @@ public class BlueFar_Charlotte extends LinearOpMode{
         boat.back_left_motor.setDirection(DcMotor.Direction.REVERSE);
         boat.front_right_motor.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         boat.back_right_motor.setDirection(DcMotor.Direction.FORWARD);
-        telemetry.addData("uwu", "Drive Angle: " + angle);
+        telemetry.addData(">", "Drive Angle: " + angle);
         telemetry.update();
         int Dx = (int) Math.round(Math.sin(angle + Math.PI/4));
         int Dy = (int) Math.round(Math.sin(angle - Math.PI/4));
@@ -264,36 +280,36 @@ public class BlueFar_Charlotte extends LinearOpMode{
     public void findColumn(double blep, double bop){
         double range = blep; //Amount it goes left and right to find the thingy
         double time = bop;
-        int fuckthisissuchastupidwayofdoingthis = 0;
+        int doorthisissuchastupidwayofdoingthis = 0;
         boolean stupiditycount = false;
         double columnStartTime = runtime.milliseconds();
-        //double fuckme = runtime.milliseconds();
+        //double doorme = runtime.milliseconds();
         while(!(boat.wall_distance_sensor.getDistance(DistanceUnit.MM) < 999) && runtime.milliseconds() - columnStartTime < time && opModeIsActive()){
-            telemetry.addData("uwu", boat.front_left_motor.isBusy());
+            telemetry.addData(">", boat.front_left_motor.isBusy());
             telemetry.update();
-            if(fuckthisissuchastupidwayofdoingthis == 0){
+            if(doorthisissuchastupidwayofdoingthis == 0){
                 driveWithoutBusy(PI, range/2, .5);
-                fuckthisissuchastupidwayofdoingthis = 1;
+                doorthisissuchastupidwayofdoingthis = 1;
             }
             if(!boat.front_left_motor.isBusy()){
                 if(stupiditycount == true){
                     drive(PI/2, 2, 1);
                     stupiditycount = false;
                 }
-                if(fuckthisissuchastupidwayofdoingthis == 1){
+                if(doorthisissuchastupidwayofdoingthis == 1){
                     driveWithoutBusy(0, range, .5);
-                    fuckthisissuchastupidwayofdoingthis = 2;
+                    doorthisissuchastupidwayofdoingthis = 2;
                     stupiditycount = true;
                 }
-                else if(fuckthisissuchastupidwayofdoingthis == 2){
+                else if(doorthisissuchastupidwayofdoingthis == 2){
                     driveWithoutBusy(PI, range, .5);
-                    fuckthisissuchastupidwayofdoingthis = 1;
+                    doorthisissuchastupidwayofdoingthis = 1;
                     stupiditycount = true;
                 }
-                //fuckme = runtime.milliseconds();
+                //doorme = runtime.milliseconds();
             }
         }
-        if(fuckthisissuchastupidwayofdoingthis == 1){
+        if(doorthisissuchastupidwayofdoingthis == 1){
             drive(PI, 1, 1);
         }
         boat.back_left_motor.setPower(0);
@@ -304,7 +320,7 @@ public class BlueFar_Charlotte extends LinearOpMode{
     public void evenMoreStupidFindColumn(){
         double columnStartTime = runtime.milliseconds();
         int fml = 0;
-        //double fuckme = runtime.milliseconds();
+        //double doorme = runtime.milliseconds();
         while(!(boat.wall_distance_sensor.getDistance(DistanceUnit.MM) < 999) && runtime.milliseconds() - columnStartTime < 4000 && opModeIsActive()){
             if(fml == 0){
                 driveWithoutBusy(0, 5, .5);
@@ -328,7 +344,7 @@ public class BlueFar_Charlotte extends LinearOpMode{
         int back_left_motor_original_pos = boat.back_left_motor.getCurrentPosition();
         int back_right_motor_original_pos = boat.back_right_motor.getCurrentPosition();
         
-        telemetry.addData("uwu", ":(");
+        telemetry.addData(">", ":(");
         telemetry.update();
 //        if(i == 0){
 //            boat.right_intake.setPower(-.3);
@@ -348,7 +364,7 @@ public class BlueFar_Charlotte extends LinearOpMode{
         double blep = runtime.milliseconds();
         while(!(boat.glyph_distance_sensor.getDistance(DistanceUnit.MM) < 100) && opModeIsActive() && runtime.milliseconds() - blep < 8000){
             if(boat.front_left_motor.getCurrentPosition() > 3000){
-                telemetry.addData("uwu", "driving back! woo");
+                telemetry.addData(">", "driving back! woo");
                 telemetry.update();
                 sleep(500);
                 drive(PI/2, -(boat.front_left_motor.getCurrentPosition() - front_left_motor_original_pos) * 35/2240, 1);
@@ -363,12 +379,13 @@ public class BlueFar_Charlotte extends LinearOpMode{
         while(boat.glyph_distance_sensor.getDistance(DistanceUnit.MM) < 100){}
         boat.right_intake.setPower(0);
         boat.left_intake.setPower(0);
-        telemetry.addData("uwu", shift);
+        telemetry.addData(">", shift);
         telemetry.update();
         drive(PI/2, -(boat.front_left_motor.getCurrentPosition() - front_left_motor_original_pos) * 35/2240, 1);
     }
-    public void fuckGetGlyph(){
+    public boolean doorGetGlyph(){
         double shift = 0;
+        boolean rip = false;
         int front_left_motor_original_pos = boat.front_left_motor.getCurrentPosition();
         boat.right_intake.setPower(-1);
         boat.left_intake.setPower(-1);
@@ -380,7 +397,7 @@ public class BlueFar_Charlotte extends LinearOpMode{
             if(boat.front_left_motor.getCurrentPosition() > 3000){
                 boat.right_intake.setPower(0);
                 boat.left_intake.setPower(0);
-                telemetry.addData("uwu", "driving back! woo");
+                telemetry.addData(">", "driving back! woo");
                 telemetry.update();
                 sleep(500);
                 drive(PI/2, -(boat.front_left_motor.getCurrentPosition() - front_left_motor_original_pos) * 35/2240, 1);
@@ -389,16 +406,20 @@ public class BlueFar_Charlotte extends LinearOpMode{
                 driveWithoutBusy(PI/2, 30, 0.3);
             }
         }
+        if(runtime.milliseconds() - blep < 8000){
+            rip = true;
+        }
         boat.right_intake.setPower(0);
         boat.left_intake.setPower(0);
         drive(PI/2, -(boat.front_left_motor.getCurrentPosition() - front_left_motor_original_pos) * 35/2240, 1);
+        return rip; 
     }
     public void printInt(int text){
-        telemetry.addData("uwu", Integer.toString(text));
+        telemetry.addData(">", Integer.toString(text));
         telemetry.update();
     }
     public void printHeading(){
-        telemetry.addData("uwu", getHeading());
+        telemetry.addData(">", getHeading());
         telemetry.update();
     }
     public void outtake(){
@@ -413,7 +434,7 @@ public class BlueFar_Charlotte extends LinearOpMode{
         boat.left_intake.setPower(0);
     }
     public void outtakePush(){
-        telemetry.addData("uwu", boat.glyph_distance_sensor.getDistance(DistanceUnit.MM));
+        telemetry.addData(">", boat.glyph_distance_sensor.getDistance(DistanceUnit.MM));
         telemetry.update();
         boat.right_intake.setPower(.4);
         boat.left_intake.setPower(.4);
@@ -490,7 +511,7 @@ public class BlueFar_Charlotte extends LinearOpMode{
         sleep(300);
     }
     public void reset_drive(){
-        telemetry.addData("uwu", "~ Resetting Encoders ~");
+        telemetry.addData(">", "~ Resetting Encoders ~");
         telemetry.update();
 
         boat.front_left_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -502,7 +523,7 @@ public class BlueFar_Charlotte extends LinearOpMode{
         boat.front_right_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         boat.back_left_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         boat.back_right_motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        telemetry.addData("uwu", "~ Done :D ~");
+        telemetry.addData(">", "~ Done :D ~");
         telemetry.update();
     }
     public void busy(){ //Use to check if motors are running
@@ -510,27 +531,27 @@ public class BlueFar_Charlotte extends LinearOpMode{
         double busyStartTime = runtime.milliseconds();
 
         while(boat.back_left_motor.isBusy() && boat.back_right_motor.isBusy() && boat.front_left_motor.isBusy() && boat.front_right_motor.isBusy() && opModeIsActive()){
-//            telemetry.addData("uwu", "Busy " + (runtime.milliseconds() - busyStartTime));
-//            telemetry.addData("uwu", "~~~ Motors ~~~");
-//            telemetry.addData("uwu", "Front_Left_Motor: " + boat.front_left_motor.getCurrentPosition() / 1120);
-//            telemetry.addData("uwu", "Front_Right_Motor: " + boat.front_right_motor.getCurrentPosition() / 1120);
-//            telemetry.addData("uwu", "Back_Left_Motor: " + boat.back_left_motor.getCurrentPosition() / 1120);
-//            telemetry.addData("uwu", "Back_Right_Motor: " + boat.back_right_motor.getCurrentPosition() / 1120);
-//            telemetry.addData("uwu", "Busy List <");
+//            telemetry.addData(">", "Busy " + (runtime.milliseconds() - busyStartTime));
+//            telemetry.addData(">", "~~~ Motors ~~~");
+//            telemetry.addData(">", "Front_Left_Motor: " + boat.front_left_motor.getCurrentPosition() / 1120);
+//            telemetry.addData(">", "Front_Right_Motor: " + boat.front_right_motor.getCurrentPosition() / 1120);
+//            telemetry.addData(">", "Back_Left_Motor: " + boat.back_left_motor.getCurrentPosition() / 1120);
+//            telemetry.addData(">", "Back_Right_Motor: " + boat.back_right_motor.getCurrentPosition() / 1120);
+//            telemetry.addData(">", "Busy List <");
 //            if(boat.front_left_motor.isBusy()){
-//                telemetry.addData("uwu", "Front Left Motor");
+//                telemetry.addData(">", "Front Left Motor");
 //            }
 //            if(boat.front_right_motor.isBusy()){
-//                telemetry.addData("uwu", "Front Right Motor");
+//                telemetry.addData(">", "Front Right Motor");
 //            }
 //            if(boat.back_left_motor.isBusy()){
-//                telemetry.addData("uwu", "Back Left Motor");
+//                telemetry.addData(">", "Back Left Motor");
 //            }
 //            if(boat.back_right_motor.isBusy()){
-//                telemetry.addData("uwu", "Back Right Motor");
+//                telemetry.addData(">", "Back Right Motor");
 //            }
 //            telemetry.update();
-            telemetry.addData("uwu", "Buuuusy");
+            telemetry.addData(">", "Buuuusy");
             
         }
     }
@@ -543,7 +564,7 @@ public class BlueFar_Charlotte extends LinearOpMode{
         boat.back_right_motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         boat.front_right_motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         boat.front_left_motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        telemetry.addData("uwu", angle);
+        telemetry.addData(">", angle);
         telemetry.update();
         double rotateStartTime = runtime.milliseconds();
         while (((Math.abs(angle - getHeading()) > threshold) || ((Math.abs(angle) > 180 - threshold) && (Math.abs(Math.abs(angle) - Math.abs(getHeading())) > threshold))) && runtime.milliseconds() - rotateStartTime < 6000) {
@@ -566,17 +587,17 @@ public class BlueFar_Charlotte extends LinearOpMode{
                 boat.front_right_motor.setPower(power);
                 boat.front_left_motor.setPower(-1*power);
                 boat.back_right_motor.setPower(power);
-                telemetry.addData("uwu", "If");
+                telemetry.addData(">", "If");
             } else {
         //TURN CLOCKWISE
                 boat.back_left_motor.setPower(power);
                 boat.front_right_motor.setPower(-1*power);
                 boat.front_left_motor.setPower(power);
                 boat.back_right_motor.setPower(-1*power);
-                telemetry.addData("uwu", "Else");
+                telemetry.addData(">", "Else");
             }
-            telemetry.addData("uwu", angle - getHeading());
-            telemetry.addData("uwu", runtime.milliseconds() - rotateStartTime);
+            telemetry.addData(">", angle - getHeading());
+            telemetry.addData(">", runtime.milliseconds() - rotateStartTime);
             telemetry.update();
         }
         boat.back_left_motor.setPower(0);
@@ -611,7 +632,7 @@ public class BlueFar_Charlotte extends LinearOpMode{
                 hsvValues);
         telemetry.addData("Values", hsvValues[0]);
         if (hsvValues[0] <= 250 && hsvValues[0] >= 130) {
-            telemetry.addData("uwu", "Blue");
+            telemetry.addData(">", "Blue");
             relativeLayout.post(new Runnable() {
                 public void run() {
                     relativeLayout.setBackgroundColor(Color.BLUE);
@@ -640,7 +661,7 @@ public class BlueFar_Charlotte extends LinearOpMode{
                     break;
             }
         } else if (hsvValues[0] <= 25 || (hsvValues[0] >= 300 && hsvValues[0] <= 400)) {
-            telemetry.addData("uwu", "Red");
+            telemetry.addData(">", "Red");
             relativeLayout.post(new Runnable() {
                 public void run() {
                     relativeLayout.setBackgroundColor(Color.RED);
@@ -669,7 +690,7 @@ public class BlueFar_Charlotte extends LinearOpMode{
                     break;
             }
         } else {
-            telemetry.addData("uwu", "Unknown");
+            telemetry.addData(">", "Unknown");
             telemetry.update();
             boat.jewel_arm.setPosition(1);
             sleep(200);
